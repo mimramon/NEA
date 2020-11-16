@@ -5,6 +5,13 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public CharacterController player; //Player's character controller is assigned in editor
+    public bool isGrounded; //in the movement function is used to check if the player is on the ground
+    public Vector3 velocity; // used to calculate the acceleration due to gravity
+    public Transform groundCheck; // assigned in editor, is the object used to check that the player iss grounded
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask; // is assigned in the editor and will hold the ground
+    public float gravity = -9.81f; //sets value of g
+    public float speed = 5f; // sets player speed
 
     // Update is called once per frame
     void Update()
@@ -25,7 +32,7 @@ public class PlayerManager : MonoBehaviour
         
         if(direction.magnitude > 0.1f) //checks that the magnitude of the vector is bigger than 0.1
         {
-            player.Move(direction);//moves the player in the vector direction
+            player.Move(direction*Time.deltaTime*speed);//moves the player in the vector direction, Time.deltaTime is the ammount of time between frames and makes it so that framerate doesnt affect speed
         }
         
     }
