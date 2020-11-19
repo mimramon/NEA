@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class CameraBehaviour : MonoBehaviour
 {
-    public GameObject player;
-    public GameObject cam;
+    public Transform player; //player's  position
+    public Transform cam; //camera's position
+    public Vector3 offset = new Vector3(0f, 0f, -10f); //Vector for the camera offset
 
     void Update() 
     {
-        cam.Move(player.transform);
+        cam.position = player.position + offset;//every frame the cameras position is updated to the player position + the offset
     }
 
 }
