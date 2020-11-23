@@ -220,7 +220,7 @@ Transform:
   - {fileID: 1727575223}
   - {fileID: 702326535}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &543297796
 MonoBehaviour:
@@ -255,7 +255,7 @@ GameObject:
   m_Component:
   - component: {fileID: 702326535}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -537,12 +537,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981919736}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 1, z: -5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1981919740
 MonoBehaviour:
@@ -558,7 +558,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 543297795}
   cam: {fileID: 1981919739}
-  offset: {x: 0, y: 0, z: -10}
 --- !u!1 &2040216320
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,5 +650,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
