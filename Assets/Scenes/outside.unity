@@ -245,6 +245,7 @@ MonoBehaviour:
   speed: 5
   cam: {fileID: 1981919739}
   turnSmoothTime: 0.1
+  jumpHeight: 5
 --- !u!1 &702326534
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,6 +559,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 543297795}
   cam: {fileID: 1981919739}
+  offset: {x: 0, y: -2.5, z: -10}
+  currentYaw: 0
+  yawSpeed: 100
+  pitch: 2
 --- !u!1 &2040216320
 GameObject:
   m_ObjectHideFlags: 0

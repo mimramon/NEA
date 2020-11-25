@@ -6,10 +6,10 @@ public class CameraBehaviour : MonoBehaviour
 {
     public Transform player; //player's  position
     public Transform cam; //camera's position
-    public Vector3 offset = new Vector3(0,0,-10); // vector containing the offset for the camera
-    public float currentYaw = 0; // tracks camera yaw
-    public float yawSpeed = 100; // sets the desired yaw speed
-    public float pitch = 2; // sets the pitch
+    public Vector3 offset = new Vector3(0,0,-10); //vector containing the offset for the camera
+    public float currentYaw = 0; //tracks camera yaw
+    public float yawSpeed = 100; //sets the desired yaw speed
+    public float pitch = 2; //sets the pitch
     
     //called every frame
     void Update() 
@@ -20,8 +20,8 @@ public class CameraBehaviour : MonoBehaviour
     //called after Update()
     void LateUpdate() 
     {
-        transform.position = player.position - offset;// guarantees offset from player is maintained
-        transform.LookAt(player.position + Vector3.up * pitch);// makes sure player is focal point
-        cam.RotateAround(player.position, Vector3.up, currentYaw);//rotates camera around player
+        transform.position = player.position - offset; //guarantees offset from player is maintained
+        transform.LookAt(player.position + Vector3.up * pitch); //makes sure player is focal point
+        cam.RotateAround(player.position, Vector3.up, currentYaw); //rotates camera around player
     }
 }
