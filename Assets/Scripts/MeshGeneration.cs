@@ -15,6 +15,7 @@ public class MeshGeneration : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         CreateShape();
+        UpdateMesh();
     }
 
     // Update is called once per frame
@@ -31,5 +32,12 @@ public class MeshGeneration : MonoBehaviour
         {
             0,1,2
         };
+    }
+
+    public void UpdateMesh()
+    {
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
     }
 }
