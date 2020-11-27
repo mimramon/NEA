@@ -297,8 +297,8 @@ InputManager:
     m_Name: CamHorizontal
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: q
-    positiveButton: e
+    negativeButton: e
+    positiveButton: q
     altNegativeButton: 
     altPositiveButton: joystick button 1
     gravity: 3
