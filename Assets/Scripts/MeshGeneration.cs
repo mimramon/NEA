@@ -9,6 +9,8 @@ public class MeshGeneration : MonoBehaviour
     public int[] triangles; //Integer array that holds all the points of the triangles that have to be drawn for the mesh to be rendered
     public int gridX = 50; //Holds the grid size (x)
     public int gridZ = 50; //Holds the grid size (z)
+    public float steep = 5; //determines how tall and steep a mountain can be
+    public float perlinCoefficient = 0.1f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
     Mesh mesh; //Contains the mesh gameobject
     MeshCollider meshCollider; //contains the mesh's collider
 
@@ -19,6 +21,12 @@ public class MeshGeneration : MonoBehaviour
         GetComponent<MeshFilter>().mesh = mesh; //gets the mesh from the mesh generator object
         meshCollider = GetComponent<MeshCollider>(); //assigns the mesh collider on the mesh generator gameobject to the mesh collider variable
 
+        CreateShape(); 
+        UpdateMesh();
+    }
+
+    void LateUpdate()
+    {
         CreateShape(); 
         UpdateMesh();
     }
@@ -34,7 +42,7 @@ public class MeshGeneration : MonoBehaviour
         {
             for(int x = 0;x <= gridX;x++) //whilst x position on grid is less than the x size of grid run the following
             {
-                float y = Mathf.PerlinNoise(x * 0.3f, z * 0.3f) * 2; //Perlin noise is a way of generating pseudorandom numbers with a smooth gradient, this allows for the generated terrain to look more natural as there  are no sudden uneven points on the generated texture, i use this fact to assign a y value to each vertex while still making sure that the terrain looks good
+                float y = Mathf.PerlinNoise(x * perlinCoefficient, z * perlinCoefficient) * steep; //Perlin noise is a way of generating pseudorandom numbers with a smooth gradient, this allows for the generated terrain to look more natural as there  are no sudden uneven points on the generated texture, i use this fact to assign a y value to each vertex while still making sure that the terrain looks good
                 vertices[i] = new Vector3(x,y,z); //sets where the vertex should be in 3D space
                 i++;
             }
@@ -80,6 +88,8 @@ public class MeshGeneration : MonoBehaviour
         mesh.vertices = vertices; //sets the mesh vertices
         mesh.triangles = triangles; //sets the mesh triangles
         mesh.RecalculateNormals(); //recalculates the normals, in other words it recalculates the way light is meant to bounce off the object
+        mesh.RecalculateTangents();
         meshCollider.sharedMesh = mesh; //assigns the mesh that is generated to the collider so that the collision can be calculated
+        mesh.Optimize();
     }
 }
