@@ -7,10 +7,14 @@ public class MeshGeneration : MonoBehaviour
 {
     public Vector3[] vertices; //Vector array that contains all the vertices of the mesh, from now on referenced as grid.
     public int[] triangles; //Integer array that holds all the points of the triangles that have to be drawn for the mesh to be rendered
-    public int gridX = 50; //Holds the grid size (x)
-    public int gridZ = 50; //Holds the grid size (z)
+    public int chunkSize = 50; //Holds the grid size (x)
     public float steep = 5; //determines how tall and steep a mountain can be
-    public float perlinCoefficient = 0.1f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
+    public float noiseDensity1 = 0.05f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
+    public float noiseDensity2 = 0.1f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
+    public float noiseDensity3 = 0.2f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
+    public float persistance1 = 5f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
+    public float persistance2 = 2f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
+    public float persistance3 = 0.5f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
     Mesh mesh; //Contains the mesh gameobject
     MeshCollider meshCollider; //contains the mesh's collider
 
@@ -34,27 +38,32 @@ public class MeshGeneration : MonoBehaviour
     //Creates Vertices and Triangles for the mesh
     public void CreateShape()
     {
-        vertices = new Vector3[(gridX + 1) * (gridZ + 1)]; //sets size of the array to the number of points required for a grid of apropriate size
+        vertices = new Vector3[(chunkSize + 1) * (chunkSize + 1)]; //sets size of the array to the number of points required for a grid of apropriate size
 
         int i = 0; //counter variable
         
-        for(int z = 0;z <= gridZ;z++) //whilst z position on grid is less than the z size of grid run the following
+        for(int z = 0;z <= chunkSize;z++) //whilst z position on grid is less than the z size of grid run the following
         {
-            for(int x = 0;x <= gridX;x++) //whilst x position on grid is less than the x size of grid run the following
+            for(int x = 0;x <= chunkSize;x++) //whilst x position on grid is less than the x size of grid run the following
             {
-                float y = Mathf.PerlinNoise(x * perlinCoefficient, z * perlinCoefficient) * steep; //Perlin noise is a way of generating pseudorandom numbers with a smooth gradient, this allows for the generated terrain to look more natural as there  are no sudden uneven points on the generated texture, i use this fact to assign a y value to each vertex while still making sure that the terrain looks good
+                //Perlin noise is a way of generating pseudorandom numbers with a smooth gradient, this allows for the generated terrain to look more natural as there  are no sudden uneven points on the generated texture, i use this fact to assign a y value to each vertex while still making sure that the terrain looks good
+                float octave1 = Mathf.PerlinNoise(x * noiseDensity1, z * noiseDensity1) * persistance1; //first octave
+                float octave2 = Mathf.PerlinNoise(x * noiseDensity2, z * noiseDensity2) * persistance2; //second octave
+                float octave3 = Mathf.PerlinNoise(x * noiseDensity3, z * noiseDensity3) * persistance3; //third octave
+                float y = octave1 + octave2 + octave3; //y possition of the vertex
+
                 vertices[i] = new Vector3(x,y,z); //sets where the vertex should be in 3D space
                 i++;
             }
         }
 
-        triangles = new int[gridX * gridZ * 6]; //Defines the size of the triangle array to that of 6 * the number of squares in the grid, this is because for each square in the grid 2 triangles need to be formed and each trianle needs 3 points to be defined
+        triangles = new int[chunkSize * chunkSize * 6]; //Defines the size of the triangle array to that of 6 * the number of squares in the grid, this is because for each square in the grid 2 triangles need to be formed and each trianle needs 3 points to be defined
         int tris = 0; //counts which triangle in the triangle array the program is on, increases in multiples of 6
         int vert = 0; //counts which vertex the program is on
 
-        for(int z = 0;z < gridZ;z++)//whilst z position on grid is less than the z size of grid run the following
+        for(int z = 0;z < chunkSize;z++)//whilst z position on grid is less than the z size of grid run the following
         {
-            for(int x = 0;x < gridX;x++)//whilst x position on grid is less than the x size of grid run the following
+            for(int x = 0;x < chunkSize;x++)//whilst x position on grid is less than the x size of grid run the following
             {
                 /*
                 In unity for a triangle has only one of its two faces rendered, the side that is rendered is decided by what direction the triangle was drawn in,
@@ -67,11 +76,11 @@ public class MeshGeneration : MonoBehaviour
                 below is the algorithm that does this
                 */
                 triangles[tris + 0] = vert + 0; 
-                triangles[tris + 1] = vert + gridX + 1;
+                triangles[tris + 1] = vert + chunkSize + 1;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + gridX + 1;
-                triangles[tris + 5] = vert + gridX + 2;
+                triangles[tris + 4] = vert + chunkSize + 1;
+                triangles[tris + 5] = vert + chunkSize + 2;
 
                 vert++;
                 tris +=6 ;
