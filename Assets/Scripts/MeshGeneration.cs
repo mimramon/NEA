@@ -7,7 +7,7 @@ public class MeshGeneration : MonoBehaviour
 {
     public Vector3[] vertices; //Vector array that contains all the vertices of the mesh, from now on referenced as grid.
     public int[] triangles; //Integer array that holds all the points of the triangles that have to be drawn for the mesh to be rendered
-    public int chunkSize = 50; //Holds the grid size (x)
+    public static int chunkSize = 50; //Holds the grid size (x)
     public float steep = 5; //determines how tall and steep a mountain can be
     public float noiseDensity1 = 0.05f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
     public float noiseDensity2 = 0.1f; //Perlin noise coefficient, determines how "noisy" the terrain will be, the higher the value the more noisy the outcome
@@ -15,7 +15,7 @@ public class MeshGeneration : MonoBehaviour
     public float persistance1 = 5f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
     public float persistance2 = 2f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
     public float persistance3 = 0.5f; //determines how much the individual octave affects the terrain, the higher the number the more effect it has on the terrain
-    Mesh mesh; //Contains the mesh gameobject
+    public Mesh mesh; //Contains the mesh gameobject
     MeshCollider meshCollider; //contains the mesh's collider
 
     // Start is called before the first frame update
@@ -50,7 +50,7 @@ public class MeshGeneration : MonoBehaviour
                 float octave1 = Mathf.PerlinNoise(x * noiseDensity1, z * noiseDensity1) * persistance1; //first octave
                 float octave2 = Mathf.PerlinNoise(x * noiseDensity2, z * noiseDensity2) * persistance2; //second octave
                 float octave3 = Mathf.PerlinNoise(x * noiseDensity3, z * noiseDensity3) * persistance3; //third octave
-                float y = octave1 + octave2 + octave3; //y possition of the vertex
+                float y = (octave1 + octave2 + octave3) * steep; //y possition of the vertex
 
                 vertices[i] = new Vector3(x,y,z); //sets where the vertex should be in 3D space
                 i++;
