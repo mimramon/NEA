@@ -401,12 +401,12 @@ MonoBehaviour:
   drawMode: 1
   mapWidth: 100
   mapHeight: 100
-  noiseScale: 39.61
-  octaves: 1
-  persistance: 0.2
-  lacunarity: 1
-  seed: 3
-  offset: {x: 2.08, y: -6.23}
+  noiseScale: 18.67
+  octaves: 3
+  persistance: 0.23
+  lacunarity: 1.71
+  seed: 14
+  offset: {x: 0.76, y: -0.93}
   autoUpdate: 1
   regions:
   - height: 0
