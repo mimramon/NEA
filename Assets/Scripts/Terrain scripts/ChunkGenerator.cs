@@ -46,11 +46,11 @@ public class ChunkGenerator : MonoBehaviour
         MapDisplay display = FindObjectOfType<MapDisplay>(); //gets MapDisplay object
         if(drawMode == DrawMode.NoiseMap)
         {
-           display.DrawNoiseMap(noiseMap); //draws the noisemap 
+           display.DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap)); //draws the noisemap 
         }
         else if(drawMode == DrawMode.colourMap)
         {
-
+            display.DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight)); //draws the noisemap 
         }
         
     }
