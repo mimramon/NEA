@@ -6,12 +6,12 @@ public static class TextureGenerator
 {
     public static Texture2D TextureFromColourMap(Color[] colourMap, int width, int height)
     {
-        Texture2D texture = new Texture2D(width, height);
-        texture.filterMode = FilterMode.Point;
-        texture.wrapMode = TextureWrapMode.Clamp;
-        texture.SetPixels(colourMap);
-        texture.Apply();
-        return texture;
+        Texture2D texture = new Texture2D(width, height); //calls constructor
+        texture.filterMode = FilterMode.Point; //sets the filter mode
+        texture.wrapMode = TextureWrapMode.Clamp; //sets the wrap mode
+        texture.SetPixels(colourMap); //applies colourmap to texture
+        texture.Apply(); //applies changes
+        return texture; //returns the texture
     }
 
     public static Texture2D TextureFromHeightMap(float[,] heightMap)

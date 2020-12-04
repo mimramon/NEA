@@ -6,6 +6,8 @@ using UnityEngine;
 [CustomEditor (typeof(ChunkGenerator))]
 public class MapEditor : Editor
 {
+    //changes the unity editor to be more easy to work with
+
     public override void OnInspectorGUI()
     {
         ChunkGenerator chunkGen = (ChunkGenerator)target;
