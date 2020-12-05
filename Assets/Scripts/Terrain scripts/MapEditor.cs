@@ -16,13 +16,13 @@ public class MapEditor : Editor
         {
             if(chunkGen.autoUpdate)
             {
-                chunkGen.GenerateChunk();
+                chunkGen.DrawMap();
             }
         }
 
         if(GUILayout.Button("Generate"))
         {
-            chunkGen.GenerateChunk();
+            chunkGen.DrawMap();
         }
     }
 }

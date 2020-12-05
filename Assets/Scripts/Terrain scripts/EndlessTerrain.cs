@@ -7,6 +7,8 @@ public class EndlessTerrain : MonoBehaviour
     public const float maxViewDist = 250;
     public Transform player;
     public static Vector2 playerPos;
+    static ChunkGenerator chunkGenerator;
+    public Material mapMaterial;
     int chunkSize;
     int visibleChunks;
 
@@ -15,6 +17,7 @@ public class EndlessTerrain : MonoBehaviour
 
     void Start()
     {
+        chunkGenerator = FindObjectOfType<ChunkGenerator>();
         chunkSize = ChunkGenerator.chunkSize - 1;
         visibleChunks = Mathf.RoundToInt(maxViewDist / chunkSize);
     }
@@ -50,7 +53,7 @@ public class EndlessTerrain : MonoBehaviour
                 }
                 else
                 {
-                    chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform));
+                    chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform, mapMaterial));
                 }
             }
         }
@@ -61,16 +64,35 @@ public class EndlessTerrain : MonoBehaviour
         Vector2 position;
         GameObject meshObject;
         Bounds bounds;
-        public Chunk(Vector2 coord, int size, Transform parent)
+        MapData mapData;
+        MeshRenderer meshRenderer;
+        MeshFilter meshFilter;
+        public Chunk(Vector2 coord, int size, Transform parent, Material material)
         {
             position = coord * size;
             bounds = new Bounds(position, Vector2.one * size);
             Vector3 positionV3 = new Vector3(position.x, 0, position.y);
-            meshObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            meshObject.transform.localScale = Vector3.one * size / 10f;
+
+            meshObject = new GameObject("Chunk");
+            meshRenderer = meshObject.AddComponent<MeshRenderer>();
+            meshFilter = meshObject.AddComponent<MeshFilter>();
+
+            meshRenderer.material = material;
             meshObject.transform.position = positionV3;
             meshObject.transform.parent = parent;
             SetVisible(false);
+
+            chunkGenerator.RequestMapData(OnMapDataRecieved);
+        }
+
+        void OnMapDataRecieved(MapData mapData)
+        {
+            chunkGenerator.RequestMeshData(mapData, OnMeshDataRecieved);
+        }
+
+        void OnMeshDataRecieved(MeshData meshData)
+        {
+            meshFilter.mesh = meshData.CreateMesh();
         }
 
         public void UpdateChunk()
@@ -90,4 +112,9 @@ public class EndlessTerrain : MonoBehaviour
             return meshObject.activeSelf;
         }
     }   
+
+    class LODMesh
+    {
+        
+    }
 }
