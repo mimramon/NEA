@@ -10,35 +10,37 @@ public class ChunkGenerator : MonoBehaviour
     }
     public DrawMode drawMode;
 
-    public int mapWidth; //chunk width
-    public int mapHeight; //chunk height
+    public const int chunkSize = 241; //chunk dimensions
+    [Range(0, 6)]
+    public int levelOfDetail;
     public float noiseScale; //scale of noise
     public int octaves; //determines No of octaves
     [Range(0,1)]
     public float persistance; //determines persistance in range 0-1
     public float lacunarity; //determines lacunarity
+    public float meshHeightMultiplier;
+    public AnimationCurve meshHeightCurve;
     public int seed; //determines seed
     public Vector2 offset; //determines offset
     public bool autoUpdate; //editor variable
     public TerrainType[] regions; //variable for the colourmap
-    public float meshHeightMultiplier;
-    public AnimationCurve meshHeightCurve;
+    
 
     public void GenerateChunk() //generates the chunk
     {
-        float[,] noiseMap = NoiseGenerator.NoiseMap(mapWidth, mapHeight, noiseScale, octaves, persistance, lacunarity, seed, offset); //gets the noisemap
-        Color[] colourMap = new Color[mapWidth * mapHeight]; //gets colourmap
+        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize, chunkSize, noiseScale, octaves, persistance, lacunarity, seed, offset); //gets the noisemap
+        Color[] colourMap = new Color[chunkSize * chunkSize]; //gets colourmap
 
-        for(int y = 0; y < mapHeight; y++)
+        for(int y = 0; y < chunkSize; y++)
         {
-            for(int x = 0; x < mapWidth; x++)
+            for(int x = 0; x < chunkSize; x++)
             {
                 float currentHeight = noiseMap[x, y]; //hold height of that point
                 for(int i = 0; i < regions.Length; i++)
                 {
                     if(currentHeight <= regions[i].height)
                     {
-                        colourMap[y * mapWidth + x] = regions[i].colour; //determines what region and therefore what colour it is
+                        colourMap[y * chunkSize + x] = regions[i].colour; //determines what region and therefore what colour it is
                         break;
                     }
                 }
@@ -53,11 +55,11 @@ public class ChunkGenerator : MonoBehaviour
         }
         else if(drawMode == DrawMode.ColourMap)
         {
-            display.DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight)); //draws the colourmap 
+            display.DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, chunkSize, chunkSize)); //draws the colourmap 
         }
         else if(drawMode == DrawMode.Mesh)
         {
-            display.DrawMesh(MeshGeneration.GenerateMesh(noiseMap, meshHeightMultiplier, meshHeightCurve), TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight));
+            display.DrawMesh(MeshGeneration.GenerateMesh(noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetail), TextureGenerator.TextureFromColourMap(colourMap, chunkSize, chunkSize));
         }
         
     }
@@ -65,15 +67,6 @@ public class ChunkGenerator : MonoBehaviour
     void OnValidate()
     {
         //clamps variables to certain values
-
-        if(mapWidth < 1)
-        {
-            mapWidth = 1;
-        }
-        if(mapHeight < 1)
-        {
-            mapHeight = 1;
-        }
         if(lacunarity < 1)
         {
             lacunarity = 1;
