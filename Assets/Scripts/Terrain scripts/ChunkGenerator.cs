@@ -10,6 +10,7 @@ public class ChunkGenerator : MonoBehaviour
     {
         NoiseMap, ColourMap, Mesh
     }
+    public NoiseGenerator.NormalizeMode normalizeMode;
     public DrawMode drawMode;
 
     public const int chunkSize = 241; //chunk dimensions
@@ -47,7 +48,7 @@ public class ChunkGenerator : MonoBehaviour
         {
             lock(meshHeightCurve)
             {
-            display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
+                display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
             }
         }
     }
@@ -122,7 +123,7 @@ public class ChunkGenerator : MonoBehaviour
 
     MapData GenerateChunkData(Vector2 centre) //generates the chunk
     {
-        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize, chunkSize, noiseScale, octaves, persistance, lacunarity, seed, centre + offset); //gets the noisemap
+        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize, chunkSize, noiseScale, octaves, persistance, lacunarity, seed, centre + offset, normalizeMode); //gets the noisemap
         Color[] colourMap = new Color[chunkSize * chunkSize]; //gets colourmap
 
         for(int y = 0; y < chunkSize; y++)
@@ -130,11 +131,18 @@ public class ChunkGenerator : MonoBehaviour
             for(int x = 0; x < chunkSize; x++)
             {
                 float currentHeight = noiseMap[x, y]; //hold height of that point
+                if(currentHeight < 0)
+                {
+                    currentHeight = 0;
+                }
                 for(int i = 0; i < regions.Length; i++)
                 {
-                    if(currentHeight <= regions[i].height)
+                    if(currentHeight > regions[i].height)
                     {
                         colourMap[y * chunkSize + x] = regions[i].colour; //determines what region and therefore what colour it is
+                    }
+                    else
+                    {
                         break;
                     }
                 }
