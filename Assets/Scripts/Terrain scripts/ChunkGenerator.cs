@@ -17,16 +17,21 @@ public class ChunkGenerator : MonoBehaviour
     [Range(0, 6)]
     public int editorLevelOfDetail;
     public float noiseScale; //scale of noise
+
     public int octaves; //determines No of octaves
     [Range(0,1)]
     public float persistance; //determines persistance in range 0-1
     public float lacunarity; //determines lacunarity
+
     public float meshHeightMultiplier;
     public AnimationCurve meshHeightCurve;
+
     public int seed; //determines seed
     public Vector2 offset; //determines offset
+
     public bool autoUpdate; //editor variable
     public TerrainType[] regions; //variable for the colourmap
+    
     Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
     Queue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
     

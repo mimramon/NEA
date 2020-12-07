@@ -62,7 +62,7 @@ public class EndlessTerrain : MonoBehaviour
         {
             for(int xOffset = -visibleChunks; xOffset <= visibleChunks; xOffset++)
             {
-                Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
+                Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset); //something about the y value here isnt bing calculated correctly
                 
                 if(chunkDictionary.ContainsKey(viewedChunkCoord))
                 {
@@ -100,6 +100,7 @@ public class EndlessTerrain : MonoBehaviour
             this.detailLevels = detailLevels;
 
             position = coord * size;
+            position.y += (size * 1.5f); //meant to fix bug that causes z position to be completely offcentre
             bounds = new Bounds(position, Vector2.one * size);
             Vector3 positionV3 = new Vector3(position.x, 0, position.y);
 
@@ -161,6 +162,7 @@ public class EndlessTerrain : MonoBehaviour
                             break;
                         }
                     }
+                    
                     if(lodIndex != prevLODIndex)
                     {
                         LODMesh lodMesh = lodMeshes[lodIndex];
