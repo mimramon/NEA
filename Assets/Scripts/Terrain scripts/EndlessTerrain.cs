@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
-    const float scale = 2;
+    const float scale = 5;
+
     const float playerMoveThresholdForChunkUpdate = 25f;
     const float squarePlayerMoveThresholdForChunkUpdate = playerMoveThresholdForChunkUpdate * playerMoveThresholdForChunkUpdate;
+    
     public static float maxViewDist;
     public LODInfo[] detailLevels;
+
     public Transform player;
     public static Vector2 playerPos;
     Vector2 oldPlayerPos;
+
     static ChunkGenerator chunkGenerator;
     public Material mapMaterial;
     int chunkSize;
@@ -22,16 +26,19 @@ public class EndlessTerrain : MonoBehaviour
 
     void Start()
     {
-        maxViewDist = detailLevels[detailLevels.Length - 1].distThreshold;
         chunkGenerator = FindObjectOfType<ChunkGenerator>();
+
+        maxViewDist = detailLevels[detailLevels.Length - 1].distThreshold;
         chunkSize = ChunkGenerator.chunkSize - 1;
         visibleChunks = Mathf.RoundToInt(maxViewDist / chunkSize);
+
         UpdateVisibleChunks();
     }
 
     void Update()
     {
         playerPos = new Vector2(player.position.x, player.position.z) / scale;
+
         if((oldPlayerPos - playerPos).sqrMagnitude > squarePlayerMoveThresholdForChunkUpdate)
         {
             oldPlayerPos = playerPos;
@@ -47,6 +54,7 @@ public class EndlessTerrain : MonoBehaviour
             oldChunks[i].SetVisible(false);
         }
         oldChunks.Clear();
+
         int currentChunkCoordX = Mathf.RoundToInt(playerPos.x / chunkSize);
         int currentChunkCoordY = Mathf.RoundToInt(playerPos.y / chunkSize);
 
@@ -55,6 +63,7 @@ public class EndlessTerrain : MonoBehaviour
             for(int xOffset = -visibleChunks; xOffset <= visibleChunks; xOffset++)
             {
                 Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset);
+                
                 if(chunkDictionary.ContainsKey(viewedChunkCoord))
                 {
                     chunkDictionary[viewedChunkCoord].UpdateChunk();
@@ -72,15 +81,19 @@ public class EndlessTerrain : MonoBehaviour
         Vector2 position;
         GameObject meshObject;
         Bounds bounds;
+
         MapData mapData;
         bool mapDataRecieved;
+        int prevLODIndex = -1;
+
         MeshRenderer meshRenderer;
         MeshFilter meshFilter;
+
         MeshCollider meshCollider;
         LODInfo[] detailLevels;
         LODMesh[] lodMeshes;
         LODMesh collisionLODMesh;
-        int prevLODIndex = -1;
+        
 
         public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels)
         {
@@ -94,12 +107,13 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshCollider = meshObject.AddComponent<MeshCollider>();
-
             meshRenderer.material = material;
+            meshObject.layer = 9;
+
             meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
             meshObject.transform.localScale = Vector3.one * scale;
-            meshObject.layer = 9;
+            
             SetVisible(false);
 
             lodMeshes = new LODMesh[detailLevels.Length];

@@ -131,13 +131,9 @@ public class ChunkGenerator : MonoBehaviour
             for(int x = 0; x < chunkSize; x++)
             {
                 float currentHeight = noiseMap[x, y]; //hold height of that point
-                if(currentHeight < 0)
-                {
-                    currentHeight = 0;
-                }
                 for(int i = 0; i < regions.Length; i++)
                 {
-                    if(currentHeight > regions[i].height)
+                    if(currentHeight >= regions[i].height)
                     {
                         colourMap[y * chunkSize + x] = regions[i].colour; //determines what region and therefore what colour it is
                     }
@@ -173,6 +169,7 @@ public class ChunkGenerator : MonoBehaviour
     {
         public readonly Action<T> callback;
         public readonly T parameter;
+
         public MapThreadInfo(Action<T> callback, T parameter)
         {
             this.callback = callback;
@@ -194,6 +191,7 @@ public struct MapData
 {
     public readonly float[,] heightMap;
     public readonly Color[] colourMap;
+    
     public MapData(float[,] heightMap, Color[] colourMap)
     {
         this.heightMap = heightMap;
