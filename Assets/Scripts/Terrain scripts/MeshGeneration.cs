@@ -19,9 +19,9 @@ public static class MeshGeneration
         MeshData meshData = new MeshData(verticesPerLine, verticesPerLine);
         int vertexIndex = 0;
 
-        for(int y = 0; y < height; y+=simplificationIncrement)
+        for(int y = 0; y < height; y += simplificationIncrement)
         {
-            for(int x = 0; x < width; x+=simplificationIncrement)
+            for(int x = 0; x < width; x += simplificationIncrement)
             {
                 float vertexHeight = heightCurve.Evaluate(heightMap[x, y]) * heightMultiplier;
                 meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, vertexHeight, topLeftZ - y);

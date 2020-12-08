@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
-    const float scale = 5;
-
     const float playerMoveThresholdForChunkUpdate = 25f;
     const float squarePlayerMoveThresholdForChunkUpdate = playerMoveThresholdForChunkUpdate * playerMoveThresholdForChunkUpdate;
     
@@ -37,7 +35,7 @@ public class EndlessTerrain : MonoBehaviour
 
     void Update()
     {
-        playerPos = new Vector2(player.position.x, player.position.z) / scale;
+        playerPos = new Vector2(player.position.x, player.position.z);
 
         if((oldPlayerPos - playerPos).sqrMagnitude > squarePlayerMoveThresholdForChunkUpdate)
         {
@@ -56,14 +54,16 @@ public class EndlessTerrain : MonoBehaviour
         oldChunks.Clear();
 
         int currentChunkCoordX = Mathf.RoundToInt(playerPos.x / chunkSize);
-        int currentChunkCoordY = Mathf.RoundToInt(playerPos.y / chunkSize);
+        int currentChunkCoordY = Mathf.RoundToInt(playerPos.y / chunkSize) + 1; //probably an issue here
+
+        Debug.Log("chunkCoordY : " + currentChunkCoordY + "\nplayerPos : " + playerPos.y);
 
         for(int yOffset = -visibleChunks; yOffset <= visibleChunks; yOffset++)
         {
             for(int xOffset = -visibleChunks; xOffset <= visibleChunks; xOffset++)
             {
-                Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset); //something about the y value here isnt bing calculated correctly
-                
+                Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset); //something about the y value here isnt being calculated correctly
+
                 if(chunkDictionary.ContainsKey(viewedChunkCoord))
                 {
                     chunkDictionary[viewedChunkCoord].UpdateChunk();
@@ -98,9 +98,8 @@ public class EndlessTerrain : MonoBehaviour
         public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels)
         {
             this.detailLevels = detailLevels;
-
             position = coord * size;
-            position.y += (size * 1.5f); //meant to fix bug that causes z position to be completely offcentre
+
             bounds = new Bounds(position, Vector2.one * size);
             Vector3 positionV3 = new Vector3(position.x, 0, position.y);
 
@@ -111,9 +110,9 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer.material = material;
             meshObject.layer = 9;
 
-            meshObject.transform.position = positionV3 * scale;
+            meshObject.transform.position = positionV3;
             meshObject.transform.parent = parent;
-            meshObject.transform.localScale = Vector3.one * scale;
+            meshObject.transform.localScale = Vector3.one;
             
             SetVisible(false);
 

@@ -81,6 +81,10 @@ public static class NoiseGenerator
                 else
                 {
                     float normalisedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight);
+                    if(normalisedHeight < 0)
+                    {
+                        normalisedHeight = 0;
+                    }
                     noiseMap[x,y] = normalisedHeight;
                 }
             }
