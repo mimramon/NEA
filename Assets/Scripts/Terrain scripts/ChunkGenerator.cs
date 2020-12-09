@@ -9,7 +9,7 @@ public class ChunkGenerator : MonoBehaviour
     public enum DrawMode //enum for different drawing types
     {
         NoiseMap, ColourMap, Mesh
-    }
+    };
     public NoiseGenerator.NormalizeMode normalizeMode;
     public DrawMode drawMode;
 
@@ -51,10 +51,7 @@ public class ChunkGenerator : MonoBehaviour
         }
         else if(drawMode == DrawMode.Mesh)
         {
-            lock(meshHeightCurve)
-            {
-                display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
-            }
+            display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
         }
     }
 

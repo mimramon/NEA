@@ -11,10 +11,10 @@ public static class MeshGeneration
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
         float topLeftX = (width - 1) / -2f;
-        float topLeftZ = (height - 1) / -2f;
+        float topLeftZ = (height - 1) / 2f;
 
         int simplificationIncrement = (levelOfDetail == 0) ? 1 :levelOfDetail * 2;
-        int verticesPerLine = (width-1) / simplificationIncrement + 1;
+        int verticesPerLine = (width - 1) / simplificationIncrement + 1;
 
         MeshData meshData = new MeshData(verticesPerLine, verticesPerLine);
         int vertexIndex = 0;

@@ -56,8 +56,6 @@ public class EndlessTerrain : MonoBehaviour
         int currentChunkCoordX = Mathf.RoundToInt(playerPos.x / chunkSize);
         int currentChunkCoordY = Mathf.RoundToInt(playerPos.y / chunkSize) + 1; //probably an issue here
 
-        Debug.Log("chunkCoordY : " + currentChunkCoordY + "\nplayerPos : " + playerPos.y);
-
         for(int yOffset = -visibleChunks; yOffset <= visibleChunks; yOffset++)
         {
             for(int xOffset = -visibleChunks; xOffset <= visibleChunks; xOffset++)
