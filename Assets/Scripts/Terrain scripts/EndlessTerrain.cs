@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
+
+    const float scale = 1f;
     const float playerMoveThresholdForChunkUpdate = 25f;
     const float squarePlayerMoveThresholdForChunkUpdate = playerMoveThresholdForChunkUpdate * playerMoveThresholdForChunkUpdate;
     
@@ -35,7 +37,7 @@ public class EndlessTerrain : MonoBehaviour
 
     void Update()
     {
-        playerPos = new Vector2(player.position.x, player.position.z);
+        playerPos = new Vector2(player.position.x, player.position.z) / scale;
 
         if((oldPlayerPos - playerPos).sqrMagnitude > squarePlayerMoveThresholdForChunkUpdate)
         {
@@ -108,9 +110,9 @@ public class EndlessTerrain : MonoBehaviour
             meshRenderer.material = material;
             meshObject.layer = 9;
 
-            meshObject.transform.position = positionV3;
+            meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
-            meshObject.transform.localScale = Vector3.one;
+            meshObject.transform.localScale = Vector3.one * scale;
             
             SetVisible(false);
 
