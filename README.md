@@ -31,3 +31,29 @@ Dark Souls 3 is the latest installment of the Soulsborne series
 ### In Conclusion
 
 ### Market Research
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Feature ideas
+procedural music
+character customisation
