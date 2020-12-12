@@ -13,7 +13,7 @@ public class ChunkGenerator : MonoBehaviour
     public NoiseGenerator.NormalizeMode normalizeMode;
     public DrawMode drawMode;
 
-    public const int chunkSize = 241; //chunk dimensions
+    public const int chunkSize = 239; //chunk dimensions
     [Range(0, 6)]
     public int editorLevelOfDetail;
     public float noiseScale; //scale of noise
@@ -125,7 +125,7 @@ public class ChunkGenerator : MonoBehaviour
 
     MapData GenerateChunkData(Vector2 centre) //generates the chunk
     {
-        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize, chunkSize, noiseScale, octaves, persistance, lacunarity, seed, centre + offset, normalizeMode); //gets the noisemap
+        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize + 2, chunkSize + 2, noiseScale, octaves, persistance, lacunarity, seed, centre + offset, normalizeMode); //gets the noisemap
         Color[] colourMap = new Color[chunkSize * chunkSize]; //gets colourmap
 
         for(int y = 0; y < chunkSize; y++)
