@@ -10,24 +10,15 @@ public class ChunkGenerator : MonoBehaviour
     {
         NoiseMap, ColourMap, Mesh
     };
-    public NoiseGenerator.NormalizeMode normalizeMode;
+
+    public TerrainData terrainData;
+    public NoiseData noiseData;
+
     public DrawMode drawMode;
 
     public const int chunkSize = 239; //chunk dimensions
     [Range(0, 6)]
     public int editorLevelOfDetail;
-    public float noiseScale; //scale of noise
-
-    public int octaves; //determines No of octaves
-    [Range(0,1)]
-    public float persistance; //determines persistance in range 0-1
-    public float lacunarity; //determines lacunarity
-
-    public float meshHeightMultiplier;
-    public AnimationCurve meshHeightCurve;
-
-    public int seed; //determines seed
-    public Vector2 offset; //determines offset
 
     public bool autoUpdate; //editor variable
     public TerrainType[] regions; //variable for the colourmap
@@ -51,7 +42,7 @@ public class ChunkGenerator : MonoBehaviour
         }
         else if(drawMode == DrawMode.Mesh)
         {
-            display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
+            display.DrawMesh(MeshGeneration.GenerateMesh(mapData.heightMap, terrainData.meshHeightMultiplier, terrainData.meshHeightCurve, editorLevelOfDetail), TextureGenerator.TextureFromColourMap(mapData.colourMap, chunkSize, chunkSize));
         }
     }
 
@@ -83,7 +74,7 @@ public class ChunkGenerator : MonoBehaviour
     }
     void MeshDataThread(MapData mapData, Action<MeshData> callback, int LOD)
     {  
-        MeshData meshData = MeshGeneration.GenerateMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, LOD);
+        MeshData meshData = MeshGeneration.GenerateMesh(mapData.heightMap, terrainData.meshHeightMultiplier, terrainData.meshHeightCurve, LOD);
         
         lock(meshDataThreadInfoQueue)
         {
@@ -125,7 +116,7 @@ public class ChunkGenerator : MonoBehaviour
 
     MapData GenerateChunkData(Vector2 centre) //generates the chunk
     {
-        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize + 2, chunkSize + 2, noiseScale, octaves, persistance, lacunarity, seed, centre + offset, normalizeMode); //gets the noisemap
+        float[,] noiseMap = NoiseGenerator.NoiseMap(chunkSize + 2, chunkSize + 2, noiseData.noiseScale, noiseData.octaves, noiseData.persistance, noiseData.lacunarity, noiseData.seed, centre + noiseData.offset, noiseData.normalizeMode); //gets the noisemap
         Color[] colourMap = new Color[chunkSize * chunkSize]; //gets colourmap
 
         for(int y = 0; y < chunkSize; y++)
@@ -153,17 +144,17 @@ public class ChunkGenerator : MonoBehaviour
     void OnValidate()
     {
         //clamps variables to certain values
-        if(lacunarity < 1)
+        if(noiseData.lacunarity < 1)
         {
-            lacunarity = 1;
+            noiseData.lacunarity = 1;
         }
-        if(octaves < 1)
+        if(noiseData.octaves < 1)
         {
-            octaves = 1;
+            noiseData.octaves = 1;
         }
-        if(noiseScale < 5)
+        if(noiseData.noiseScale < 5)
         {
-            noiseScale = 5;
+            noiseData.noiseScale = 5;
         }
     }
 
