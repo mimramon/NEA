@@ -7,9 +7,12 @@ public class UpdateableData : ScriptableObject
     public event System.Action OnValuesUpdated;
     public bool autoUpdate;
 
-    void OnValidate() 
+    protected virtual void OnValidate() 
     {
-        
+        if(autoUpdate)
+        {
+            NotifyOfUpdatedValues();
+        }
     }
 
     public void NotifyOfUpdatedValues()
