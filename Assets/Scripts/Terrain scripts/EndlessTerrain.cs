@@ -7,6 +7,7 @@ public class EndlessTerrain : MonoBehaviour
     const float playerMoveThresholdForChunkUpdate = 25f;
     const float squarePlayerMoveThresholdForChunkUpdate = playerMoveThresholdForChunkUpdate * playerMoveThresholdForChunkUpdate;
     
+    public int colliderLODIndex;
     public static float maxViewDist;
     public LODInfo[] detailLevels;
 
