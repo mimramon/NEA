@@ -69,7 +69,7 @@ public class EndlessTerrain : MonoBehaviour
                 }
                 else
                 {
-                    chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform, mapMaterial, detailLevels));
+                    chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform, mapMaterial, detailLevels, colliderLODIndex));
                 }
             }
         }
@@ -92,11 +92,13 @@ public class EndlessTerrain : MonoBehaviour
         LODInfo[] detailLevels;
         LODMesh[] lodMeshes;
         LODMesh collisionLODMesh;
+        int colliderLODIndex;
         
 
-        public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels)
+        public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels, int colliderLODIndex)
         {
             this.detailLevels = detailLevels;
+            this.colliderLODIndex = colliderLODIndex;
             position = coord * size;
 
             bounds = new Bounds(position, Vector2.one * size);
@@ -119,10 +121,6 @@ public class EndlessTerrain : MonoBehaviour
             for(int i = 0; i < detailLevels.Length; i++)
             {
                 lodMeshes[i] = new LODMesh(detailLevels[i].LOD, UpdateChunk);
-                if(detailLevels[i].useForCollider)
-                {
-                    collisionLODMesh = lodMeshes[i];
-                }
             }
 
             chunkGenerator.RequestMapData(OnMapDataRecieved, position);
