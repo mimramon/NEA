@@ -6,7 +6,8 @@ public class EndlessTerrain : MonoBehaviour
 {
     const float playerMoveThresholdForChunkUpdate = 25f;
     const float squarePlayerMoveThresholdForChunkUpdate = playerMoveThresholdForChunkUpdate * playerMoveThresholdForChunkUpdate;
-    
+    const float colliderDistThreshold = 4;
+
     public int colliderLODIndex;
     public static float maxViewDist;
     public LODInfo[] detailLevels;
@@ -37,6 +38,14 @@ public class EndlessTerrain : MonoBehaviour
     void Update()
     {
         playerPos = new Vector2(player.position.x, player.position.z) / chunkGenerator.terrainData.uniformScale;
+
+        if(playerPos != oldPlayerPos)
+        {
+            foreach(Chunk chunk in oldChunks)
+            {
+                chunk.UpdateCollisionMesh();
+            }
+        }
 
         if((oldPlayerPos - playerPos).sqrMagnitude > squarePlayerMoveThresholdForChunkUpdate)
         {
@@ -93,6 +102,7 @@ public class EndlessTerrain : MonoBehaviour
         LODMesh[] lodMeshes;
         LODMesh collisionLODMesh;
         int colliderLODIndex;
+        bool hasSetCollider;
         
 
         public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels, int colliderLODIndex)
@@ -121,6 +131,11 @@ public class EndlessTerrain : MonoBehaviour
             for(int i = 0; i < detailLevels.Length; i++)
             {
                 lodMeshes[i] = new LODMesh(detailLevels[i].LOD, UpdateChunk);
+                lodMeshes[i].updateCallback += UpdateChunk;
+                if(i == colliderLODIndex)
+                {
+                    lodMeshes[i].updateCallback += UpdateCollisionMesh;
+                }
             }
 
             chunkGenerator.RequestMapData(OnMapDataRecieved, position);
@@ -172,21 +187,32 @@ public class EndlessTerrain : MonoBehaviour
                             lodMesh.RequestMesh(mapData);
                         }  
                     }
-
-                    if(lodIndex == 0)
-                    {
-                        if(collisionLODMesh.hasMesh)
-                        {
-                            meshCollider.sharedMesh = collisionLODMesh.mesh;
-                        }
-                        else if(!collisionLODMesh.hasRequestedMesh)
-                        {   
-                            collisionLODMesh.RequestMesh(mapData);
-                        }
-                    }
                     oldChunks.Add(this);
                 }
                 SetVisible(visible);
+            }
+        }
+
+        public void UpdateCollisionMesh()
+        {
+            if(hasSetCollider){return;}
+            float sqrDistPlayer2Edge = bounds.SqrDistance(playerPos);
+
+            if(sqrDistPlayer2Edge < detailLevels[colliderLODIndex].mesh)
+            {
+                if(!lodMeshes[colliderLODIndex].hasRequestedMesh)
+                {
+                    lodMeshes[colliderLODIndex].RequestMesh(mapData);
+                }
+            }
+
+            if(sqrDistPlayer2Edge < colliderDistThreshold * colliderDistThreshold)
+            {
+                if(lodMeshes[colliderLODIndex].hasMesh)
+                {
+                    meshCollider.sharedMesh = lodMeshes[colliderLODIndex].mesh;
+                    hasSetCollider = true;
+                }
             }
         }
 
@@ -207,12 +233,11 @@ public class EndlessTerrain : MonoBehaviour
         public bool hasRequestedMesh;
         public bool hasMesh;
         int LOD;
-        System.Action updateCallback;
+        public event System.Action updateCallback;
 
-        public LODMesh(int LOD, System.Action updateCallback)
+        public LODMesh(int LOD)
         {
             this.LOD = LOD;
-            this.updateCallback = updateCallback;
         }
 
         void OnMeshDataRecieved(MeshData meshData)
@@ -234,5 +259,13 @@ public class EndlessTerrain : MonoBehaviour
         public int LOD;
         public float distThreshold;
         public bool useForCollider;
+
+        public float sqrVsbleDistThreshold
+        {
+            get
+            {
+                return distThreshold * distThreshold;
+            }
+        }
     }
 }
