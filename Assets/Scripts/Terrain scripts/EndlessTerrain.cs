@@ -57,11 +57,12 @@ public class EndlessTerrain : MonoBehaviour
 
     void UpdateVisibleChunks()
     {
-        for(int i = 0; i < oldChunks.Count; i++)
+        HashSet<Vector2> beenUpdatedCoords = new HashSet<Vector2>();
+        for(int i = oldChunks.Count - 1; i >= 0; i--)
         {
-            oldChunks[i].SetVisible(false);
+            beenUpdatedCoords.Add(oldChunks[i].coord);
+            oldChunks[i].UpdateChunk();
         }
-        oldChunks.Clear();
 
         int currentChunkCoordX = Mathf.RoundToInt(playerPos.x / chunkSize);
         int currentChunkCoordY = Mathf.RoundToInt(playerPos.y / chunkSize) + 1; //probably an issue here
@@ -71,21 +72,26 @@ public class EndlessTerrain : MonoBehaviour
             for(int xOffset = -visibleChunks; xOffset <= visibleChunks; xOffset++)
             {
                 Vector2 viewedChunkCoord = new Vector2(currentChunkCoordX + xOffset, currentChunkCoordY + yOffset); //something about the y value here isnt being calculated correctly
-
-                if(chunkDictionary.ContainsKey(viewedChunkCoord))
+                if(!beenUpdatedCoords.Contains(viewedChunkCoord))
                 {
-                    chunkDictionary[viewedChunkCoord].UpdateChunk();
+                    if(chunkDictionary.ContainsKey(viewedChunkCoord))
+                    {
+                        chunkDictionary[viewedChunkCoord].UpdateChunk();
+                    }
+                    else
+                    {
+                        chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform, mapMaterial, detailLevels, colliderLODIndex));
+                    }
                 }
-                else
-                {
-                    chunkDictionary.Add(viewedChunkCoord, new Chunk(viewedChunkCoord, chunkSize, transform, mapMaterial, detailLevels, colliderLODIndex));
-                }
+                
             }
         }
     }
 
     public class Chunk
     {
+        public Vector2 coord;
+        
         Vector2 position;
         GameObject meshObject;
         Bounds bounds;
@@ -107,6 +113,7 @@ public class EndlessTerrain : MonoBehaviour
 
         public Chunk(Vector2 coord, int size, Transform parent, Material material, LODInfo[] detailLevels, int colliderLODIndex)
         {
+            this.coord = coord;
             this.detailLevels = detailLevels;
             this.colliderLODIndex = colliderLODIndex;
             position = coord * size;
@@ -130,7 +137,7 @@ public class EndlessTerrain : MonoBehaviour
             lodMeshes = new LODMesh[detailLevels.Length];
             for(int i = 0; i < detailLevels.Length; i++)
             {
-                lodMeshes[i] = new LODMesh(detailLevels[i].LOD, UpdateChunk);
+                lodMeshes[i] = new LODMesh(detailLevels[i].LOD);
                 lodMeshes[i].updateCallback += UpdateChunk;
                 if(i == colliderLODIndex)
                 {
@@ -158,6 +165,7 @@ public class EndlessTerrain : MonoBehaviour
             {
                 float playerDistFromEdge = Mathf.Sqrt(bounds.SqrDistance(playerPos));
                 bool visible = playerDistFromEdge <= maxViewDist;
+                bool wasVisible = isVisible();
 
                 if(visible)
                 {
@@ -187,9 +195,20 @@ public class EndlessTerrain : MonoBehaviour
                             lodMesh.RequestMesh(mapData);
                         }  
                     }
-                    oldChunks.Add(this);
+                    
                 }
-                SetVisible(visible);
+                if(wasVisible != visible)
+                {
+                    if(visible)
+                    {
+                        oldChunks.Add(this);
+                    }
+                    else
+                    {
+                        oldChunks.Remove(this);
+                    }
+                    SetVisible(visible);
+                }
             }
         }
 
@@ -198,7 +217,7 @@ public class EndlessTerrain : MonoBehaviour
             if(hasSetCollider){return;}
             float sqrDistPlayer2Edge = bounds.SqrDistance(playerPos);
 
-            if(sqrDistPlayer2Edge < detailLevels[colliderLODIndex].mesh)
+            if(sqrDistPlayer2Edge < detailLevels[colliderLODIndex].sqrVsbleDistThreshold)
             {
                 if(!lodMeshes[colliderLODIndex].hasRequestedMesh)
                 {
